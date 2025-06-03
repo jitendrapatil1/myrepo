@@ -1,17 +1,21 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
-
-# Set the working directory in the container
+FROM mcr.microsoft.com/dotnet/aspnet:7.0.10 AS base
 WORKDIR /app
+EXPOSE 8080
+EXPOSE 443
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["DemoApi/DemoApi.csproj", "DemoApi/"]
+RUN dotnet restore "DemoApi/DemoApi.csproj"
+COPY . .
+WORKDIR "/src/DemoApi"
+RUN dotnet build "DemoApi.csproj" -c Release -o /app/build
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+FROM build AS publish
+RUN dotnet publish "DemoApi.csproj" -c Release -o /app/publish
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
-
-# Run app.py when the container launches
-CMD ["python", "app.py"]
+FROM base AS final
+ENV ASPNETCORE_URLS=http://+:8080
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "DemoApi.dll"]
