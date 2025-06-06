@@ -1,7 +1,19 @@
 steps:
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['builds', 'submit', '--tag', 'gcr.io/$PROJECT_ID/hello-world']
-    id: 'build-and-push-docker-image'
+  # Install dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+
+  # Run tests
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['test']
+
+  # Build the application
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'build']
+
+# Specify the images to be pushed to the Container Registry
 images:
-  - 'gcr.io/$PROJECT_ID/hello-world'
-timeout: '1200s'
+  - 'gcr.io/$PROJECT_ID/my-app:latest'
+
+# Optional: Define a timeout for the build
+timeout: '1600s'
