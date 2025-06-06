@@ -1,7 +1,7 @@
 steps:
 - name: 'bash'
   args: ['echo', 'Hello world!']
-logsBucket: 'LOGS_BUCKET_LOCATION'
+
 serviceAccount: 1042411425797-compute@developer.gserviceaccount.com
 options:
   logging: CLOUD_LOGGING_ONLY
