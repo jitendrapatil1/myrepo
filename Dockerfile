@@ -4,5 +4,6 @@ FROM node:12.4
 WORKDIR /app
 # Add our sourcecode
 ADD . /app
+ENV logging=CLOUD_LOGGING_ONLY
 # The command to start our container
 CMD node server.js
